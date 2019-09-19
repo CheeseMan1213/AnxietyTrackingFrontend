@@ -6,7 +6,7 @@ import './error_page.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    //final args = settings.arguments;
+    final args = settings.arguments;
 
     switch (settings.name) {
       case '/':
@@ -15,11 +15,15 @@ class RouteGenerator {
       case '/calendar_page':
         return MaterialPageRoute(builder: (_) => CalendarPage());
         break;
-        case '/anxiety_entry':
-        return MaterialPageRoute(builder: (_) => AnxietyEntryPage());
+      case '/anxiety_entry':
+        return MaterialPageRoute(
+          builder: (_) => AnxietyEntryPage(
+            data: args,
+          ),
+        );
         break;
       default:
-        return  MaterialPageRoute(builder: (_) => ErrorPage());
+        return MaterialPageRoute(builder: (_) => ErrorPage());
     }
   }
 }
