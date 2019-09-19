@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AnxietyEntryPage extends StatelessWidget {
+  final String data;
+
+  AnxietyEntryPage({Key key, @required this.data}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,6 +20,7 @@ class AnxietyEntryPage extends StatelessWidget {
               Navigator.of(context).pushNamed('/');
             },
           ),
+          Text(data.toString()),
         ],
       ),
     );
