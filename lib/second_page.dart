@@ -34,7 +34,7 @@ class _CalendarPageState extends State<CalendarPage> {
               //print('You are so cool!');
               Navigator.of(context).pushNamed(
                 '/anxiety_entry',
-                arguments: 'Hi, I am James.',
+                arguments: date,
               );
             },
           ),
