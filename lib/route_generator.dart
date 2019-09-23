@@ -18,7 +18,7 @@ class RouteGenerator {
       case '/anxiety_entry':
         return MaterialPageRoute(
           builder: (_) => AnxietyEntryPage(
-            data: args,
+            date: args,
           ),
         );
         break;
