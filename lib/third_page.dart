@@ -12,6 +12,7 @@ class AnxietyEntryPage extends StatefulWidget {
 
 class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
   String _anxEntry = 'No entry given.';
+  final _formKey = GlobalKey<FormState>();
 
   TodayWas todayWas;
 
@@ -25,53 +26,61 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: <Widget>[
-            Text('Routing 3'),
-            RaisedButton(
-              child: Text('Return to homepage'),
-              onPressed: () {
-                Navigator.of(context).pushNamed('/');
-              },
-            ),
-            Text(widget.date.month.toString() +
-                '/' +
-                widget.date.day.toString() +
-                '/' +
-                widget.date.year.toString()),
-            Padding(
-              padding: const EdgeInsets.all(1.0),
-              child: TextFormField(
-                controller: this._anxEntryController,
-                keyboardType: TextInputType.multiline,
-                maxLines: 5,
-                maxLength: 194,
-                maxLengthEnforced: true,
-                decoration: InputDecoration(
-                  //border: InputBorder.none,
-                  hintText: 'Cats Rule',
+        //child: Builder( builder: (context) = Form()),
+        child: Builder(
+          builder: (context) =>
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: <Widget>[
+                    Text('Routing 3'),
+                    RaisedButton(
+                      child: Text('Return to homepage'),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/');
+                      },
+                    ),
+                    Text(widget.date.month.toString() +
+                        '/' +
+                        widget.date.day.toString() +
+                        '/' +
+                        widget.date.year.toString()),
+                    Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: TextFormField(
+                        controller: this._anxEntryController,
+                        keyboardType: TextInputType.multiline,
+                        //textInputAction: TextInputAction.done,
+                        maxLines: 5,
+                        maxLength: 194,
+                        maxLengthEnforced: true,
+                        decoration: InputDecoration(
+                          //border: InputBorder.none,
+                          hintText: 'Cats Rule',
+                        ),
+                        //autofocus: true,
+                        autocorrect: true,
+                        cursorWidth: 5.0,
+                        cursorColor: Colors.black,
+                        onFieldSubmitted: (String str) {
+                          setState(() {
+                            this._anxEntry = str;
+                          });
+                        },
+                      ),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        Scaffold.of(context)
+                            .showSnackBar(
+                            SnackBar(content: Text('Processing Data')));
+                      },
+                      child: const Text('Submit'),
+                    ),
+                    Text(this._anxEntry),
+                  ],
                 ),
-                autofocus: true,
-                autocorrect: true,
-                cursorWidth: 5.0,
-                cursorColor: Colors.black,
-                onFieldSubmitted: (String str) {
-                  setState(() {
-                    this._anxEntry = str;
-                  });
-                },
               ),
-            ),
-            FlatButton(
-              onPressed: () {
-                Scaffold
-                    .of(context)
-                    .showSnackBar(SnackBar(content: Text('Processing Data')));
-              },
-              child: const Text('Submit'),
-            ),
-            Text(this._anxEntry),
-          ],
         ),
       ),
     );
