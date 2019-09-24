@@ -26,7 +26,6 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
-        //child: Builder( builder: (context) = Form()),
         child: Builder(
           builder: (context) =>
               Form(
@@ -50,27 +49,28 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                       child: TextFormField(
                         controller: this._anxEntryController,
                         keyboardType: TextInputType.multiline,
-                        //textInputAction: TextInputAction.done,
                         maxLines: 5,
                         maxLength: 194,
                         maxLengthEnforced: true,
                         decoration: InputDecoration(
-                          //border: InputBorder.none,
-                          hintText: 'Cats Rule',
+                          labelText: 'Cats Rule',
                         ),
-                        //autofocus: true,
-                        autocorrect: true,
-                        cursorWidth: 5.0,
-                        cursorColor: Colors.black,
-                        onFieldSubmitted: (String str) {
-                          setState(() {
-                            this._anxEntry = str;
-                          });
+                        validator: (value) {
+                          if(value.isEmpty) {
+                            return 'Please make you anxiety entry.';
+                          }
+                          return null;
                         },
+                        onSaved: (val) =>
+                        setState(() => _anxEntry = val),
                       ),
                     ),
                     FlatButton(
                       onPressed: () {
+                        final form = _formKey.currentState;
+                        if(form.validate()) {
+                          form.save();
+                        }
                         Scaffold.of(context)
                             .showSnackBar(
                             SnackBar(content: Text('Processing Data')));
