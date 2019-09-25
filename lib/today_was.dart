@@ -1,5 +1,6 @@
 enum TodayWas {
-  Awesomw,
+  NotSelectedYet,
+  Awesome,
   Good,
   Fine,
   NotSoGood,
