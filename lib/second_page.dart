@@ -39,15 +39,6 @@ class _CalendarPageState extends State<CalendarPage> {
             },
           ),
           Text('Calendar'),
-          RaisedButton(
-            child: Text('Anxiety Entry'),
-            onPressed: () {
-              Navigator.of(context).pushNamed(
-                '/anxiety_entry',
-                arguments: 'Hi, I am James.',
-              );
-            },
-          ),
         ],
       ),
     );
