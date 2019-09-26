@@ -28,73 +28,82 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('AnxietyEntryPage'),
+        title: Text('Anxiety Entry'),
       ),
       body: Container(
         padding: const EdgeInsets.all(20.0),
-        color: Colors.lightGreen,
+        //color: Colors.g,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: FractionalOffset.topLeft,
+            end: FractionalOffset.bottomRight,
+            stops: [0.1, 0.5, 0.7, 0.9],
+            colors: [
+              Colors.green[800],
+              Colors.green[600],
+              Colors.green[400],
+              Colors.green[200],
+            ],
+            //tileMode: TileMode.clamp
+          ),
+        ),
         child: Builder(
           builder: (context) => Form(
             key: this._formKey,
             child: Column(
+              //crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text('Routing 3'),
-                RaisedButton(
-                  child: Text('Return to homepage'),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/');
-                  },
-                ),
-                Text(anxEntry.getDate().month.toString() +
-                    '/' +
-                    anxEntry.getDate().day.toString() +
-                    '/' +
-                    anxEntry.getDate().year.toString()),
-                Padding(
-                  padding: const EdgeInsets.all(1.0),
-                  child: TextFormField(
-                    controller: this._anxEntryController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 5,
-                    maxLength: 194,
-                    maxLengthEnforced: true,
-                    decoration: InputDecoration(
-                      labelText: 'Anxiety Entry:',
+                Row(
+                  children: <Widget>[
+                    Container(
+                      color: Colors.white,
+                      child: Text(
+                        displayDate(anxEntry.getDate()) + ':',
+                        //textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 24.0,
+                        ),
+                      ),
                     ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please make you anxiety entry.';
-                      }
-                      return null;
-                    },
-                    onSaved: (val) {
-                      setState(() {
-                        anxEntry.setAnxEntry(val);
-                      });
-                    },
-                    //onSaved: (val) => setState()
-                    //setState(() => anxEntry.setAnxEntry(val.toString())),
-                  ),
+                  ],
                 ),
-                Text('How was your day?'),
-                Row(// Row 1
+                Row(
+                  //width: 200,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Radio(// For Awesome
+                    Text(
+                      'Today was:',
+                      //textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 36.0,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  // Row 1
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Radio(
+                      // For Awesome
                       onChanged: (int e) => selectThisRadioButton(e),
                       activeColor: Colors.black,
                       value: 1,
                       groupValue: this.groupValue,
                     ),
                     Text('Awesome'),
-                    Radio(// For Good
+                    Radio(
+                      // For Good
                       onChanged: (int e) => selectThisRadioButton(e),
                       activeColor: Colors.black,
                       value: 2,
                       groupValue: this.groupValue,
                     ),
                     Text('Good'),
-                    Radio(// For Fine
+                    Radio(
+                      // For Fine
                       onChanged: (int e) => selectThisRadioButton(e),
                       activeColor: Colors.black,
                       value: 3,
@@ -103,17 +112,20 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                     Text('Fine'),
                   ],
                 ),
-                Row(// Row 2
+                Row(
+                  // Row 2
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Radio(// For NotSoGood
+                    Radio(
+                      // For NotSoGood
                       onChanged: (int e) => selectThisRadioButton(e),
                       activeColor: Colors.black,
                       value: 4,
                       groupValue: this.groupValue,
                     ),
                     Text('Not so good'),
-                    Radio(// For Terrible
+                    Radio(
+                      // For Terrible
                       onChanged: (int e) => selectThisRadioButton(e),
                       activeColor: Colors.black,
                       value: 5,
@@ -122,39 +134,100 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                     Text('Terrible'),
                   ],
                 ),
-                /*RaisedButton(
-                  color: Colors.green,
-                  textColor: Colors.white,
-                  splashColor: Colors.redAccent,
-                  child: Text(TodayWas.Awesome.toString()),
-                  onPressed: () {
-                    anxEntry.setTodayWas(TodayWas.Awesome);
-                    *//*setState(() {
-                      anxEntry.setTodayWas(TodayWas.Awesome);
-                    });*//*
-                  },
-                ),*/
-                FlatButton(
-                  color: Colors.black,
-                  textColor: Colors.green,
-                  splashColor: Colors.redAccent,
-                  onPressed: () {
-                    final form = _formKey.currentState;
-                    if (form.validate()) {
-                      form.save();
-                    }
-                    Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('Processing Data')));
-                  },
-                  child: Text('Submit'),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      'Because:',
+                      //textAlign: TextAlign.left,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 36.0,
+                      ),
+                    ),
+                  ],
                 ),
+                TextFormField(
+                  controller: this._anxEntryController,
+                  keyboardType: TextInputType.multiline,
+                  cursorColor: Colors.white,
+                  autocorrect: true,
+                  textCapitalization: TextCapitalization.sentences,
+                  maxLines: 5,
+                  maxLength: 194,
+                  maxLengthEnforced: true,
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                  decoration: InputDecoration(
+                    //labelText: 'Anxiety Entry:',
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 1.0,
+                      ),
+                    ),
+
+                    labelStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                    border: OutlineInputBorder(),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.white,
+                        width: 1.0,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please make you anxiety entry.';
+                    }
+                    return null;
+                  },
+                  onSaved: (val) {
+                    setState(() {
+                      anxEntry.setAnxEntry(val);
+                    });
+                  },
+                  //onSaved: (val) => setState()
+                  //setState(() => anxEntry.setAnxEntry(val.toString())),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    RaisedButton(
+                      color: Colors.white,
+                      textColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                          style: BorderStyle.solid,
+                          width: 5.0,
+                          color: Colors.purple
+                        ),
+                      ),
+                      splashColor: Colors.redAccent,
+                      onPressed: () {
+                        final form = _formKey.currentState;
+                        if (form.validate()) {
+                          form.save();
+                        }
+                        Scaffold.of(context).showSnackBar(
+                            SnackBar(content: Text('Processing Data')));
+                      },
+                      child: Text('Submit'),
+                    ),
+                  ],
+                ),
+                //Data to later save to database.
                 Text(anxEntry.getAnxEntry()),
-                Text(anxEntry.getDate().month.toString() +
-                    '/' +
-                    anxEntry.getDate().day.toString() +
-                    '/' +
-                    anxEntry.getDate().year.toString()),
+                Text(displayDate(anxEntry.getDate())),
                 Text(anxEntry.getTodayWas().toString()),
+                RaisedButton(
+                  child: Text('Return to homepage'),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/');
+                  },
+                ),
               ],
             ),
           ),
@@ -162,12 +235,13 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       ),
     );
   }
+
   void selectThisRadioButton(int e) {
     setState(() {
-      if(e == 1) {
+      if (e == 1) {
         this.groupValue = 1;
       }
-      switch(e) {
+      switch (e) {
         case 1:
           this.groupValue = 1;
           this._anxEntry.setTodayWas(TodayWas.Awesome);
@@ -194,5 +268,13 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
           break;
       }
     });
+  }
+
+  String displayDate(DateTime date) {
+    return date.month.toString() +
+        '/' +
+        date.day.toString() +
+        '/' +
+        date.year.toString();
   }
 }
