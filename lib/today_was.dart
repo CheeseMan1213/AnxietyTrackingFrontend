@@ -1,3 +1,5 @@
+
+///This is the Dart Enum class used for the radio buttons.
 enum TodayWas {
   NotSelectedYet,
   Awesome,
