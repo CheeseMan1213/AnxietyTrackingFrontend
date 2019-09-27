@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+///This is the page that displays the calender.
+///It is a stateful widget.
+///This file depends on the 3rd party package table_calendar.dart.
+///downloaded by this project's pubspec.yaml file
 class CalendarPage extends StatefulWidget {
   @override
   _CalendarPageState createState() => _CalendarPageState();
