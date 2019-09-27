@@ -2,6 +2,9 @@ import 'package:anxiety_tracking_front_end/today_was.dart';
 import 'package:flutter/material.dart';
 import 'anxiety_entry_entity.dart';
 
+///This is the anxiety entry route. It take a date for the previous route, the calender page.
+///It is a stateful widget.
+///
 class AnxietyEntryPage extends StatefulWidget {
   final DateTime date;
 
@@ -22,7 +25,6 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    //AnxietyTrackingEntity anxEntry = AnxietyTrackingEntity(widget.date, 'No entry given.', TodayWas.NotSelectedYet);
     AnxietyTrackingEntity anxEntry = _anxEntry;
     _anxEntry.setDate(widget.date);
 
@@ -30,212 +32,224 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       appBar: AppBar(
         title: Text('Anxiety Entry'),
       ),
-      body: Container(
-        padding: const EdgeInsets.all(20.0),
-        //color: Colors.g,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: FractionalOffset.topLeft,
-            end: FractionalOffset.bottomRight,
-            stops: [0.1, 0.5, 0.7, 0.9],
-            colors: [
-              Colors.green[800],
-              Colors.green[600],
-              Colors.green[400],
-              Colors.green[200],
-            ],
-            //tileMode: TileMode.clamp
-          ),
-        ),
-        child: Builder(
-          builder: (context) => Form(
-            key: this._formKey,
-            child: Column(
-              //crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                      color: Colors.white,
-                      child: Text(
-                        displayDate(anxEntry.getDate()) + ':',
-                        //textAlign: TextAlign.left,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(20.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: FractionalOffset.topLeft,
+                  end: FractionalOffset.bottomRight,
+                  stops: [0.1, 0.5, 0.7, 0.9],
+                  colors: [
+                    Colors.green[800],
+                    Colors.green[600],
+                    Colors.green[400],
+                    Colors.green[200],
+                  ],
+                  //tileMode: TileMode.clamp
+                ),
+              ),
+              child: Builder(
+                builder: (context) => Form(
+                  key: this._formKey,
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            color: Colors.white,
+                            child: Text(
+                              displayDate(anxEntry.getDate()) + ':',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 24.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        //width: 200,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Today was:',
+                            //textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 36.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        // Row 1
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Radio(
+                            // For Awesome
+                            onChanged: (int e) => selectThisRadioButton(e),
+                            activeColor: Colors.black,
+                            value: 1,// When matches 'groupValue' the radio button gets selected.
+                            groupValue: this.groupValue,
+                          ),
+                          Text('Awesome'),
+                          Radio(
+                            // For Good
+                            onChanged: (int e) => selectThisRadioButton(e),
+                            activeColor: Colors.black,
+                            value: 2,// When matches 'groupValue' the radio button gets selected.
+                            groupValue: this.groupValue,
+                          ),
+                          Text('Good'),
+                          Radio(
+                            // For Fine
+                            onChanged: (int e) => selectThisRadioButton(e),
+                            activeColor: Colors.black,
+                            value: 3,// When matches 'groupValue' the radio button gets selected.
+                            groupValue: this.groupValue,
+                          ),
+                          Text('Fine'),
+                        ],
+                      ),
+                      Row(
+                        // Row 2
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Radio(
+                            // For NotSoGood
+                            onChanged: (int e) => selectThisRadioButton(e),
+                            activeColor: Colors.black,
+                            value: 4,// When matches 'groupValue' the radio button gets selected.
+                            groupValue: this.groupValue,
+                          ),
+                          Text('Not so good'),
+                          Radio(
+                            // For Terrible
+                            onChanged: (int e) => selectThisRadioButton(e),
+                            activeColor: Colors.black,
+                            value: 5,// When matches 'groupValue' the radio button gets selected.
+                            groupValue: this.groupValue,
+                          ),
+                          Text('Terrible'),
+                        ],
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            'Because:',
+                            //textAlign: TextAlign.left,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 36.0,
+                            ),
+                          ),
+                        ],
+                      ),
+                      TextFormField(
+                        controller: this._anxEntryController,
+                        keyboardType: TextInputType.multiline,
+                        cursorColor: Colors.white,
+                        autocorrect: true,
+                        textCapitalization: TextCapitalization.sentences,
+                        maxLines: 5,
+                        maxLength: 194,
+                        maxLengthEnforced: true,
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 24.0,
+                          color: Colors.white,
                         ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  //width: 200,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      'Today was:',
-                      //textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 36.0,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  // Row 1
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Radio(
-                      // For Awesome
-                      onChanged: (int e) => selectThisRadioButton(e),
-                      activeColor: Colors.black,
-                      value: 1,
-                      groupValue: this.groupValue,
-                    ),
-                    Text('Awesome'),
-                    Radio(
-                      // For Good
-                      onChanged: (int e) => selectThisRadioButton(e),
-                      activeColor: Colors.black,
-                      value: 2,
-                      groupValue: this.groupValue,
-                    ),
-                    Text('Good'),
-                    Radio(
-                      // For Fine
-                      onChanged: (int e) => selectThisRadioButton(e),
-                      activeColor: Colors.black,
-                      value: 3,
-                      groupValue: this.groupValue,
-                    ),
-                    Text('Fine'),
-                  ],
-                ),
-                Row(
-                  // Row 2
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Radio(
-                      // For NotSoGood
-                      onChanged: (int e) => selectThisRadioButton(e),
-                      activeColor: Colors.black,
-                      value: 4,
-                      groupValue: this.groupValue,
-                    ),
-                    Text('Not so good'),
-                    Radio(
-                      // For Terrible
-                      onChanged: (int e) => selectThisRadioButton(e),
-                      activeColor: Colors.black,
-                      value: 5,
-                      groupValue: this.groupValue,
-                    ),
-                    Text('Terrible'),
-                  ],
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      'Because:',
-                      //textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 36.0,
-                      ),
-                    ),
-                  ],
-                ),
-                TextFormField(
-                  controller: this._anxEntryController,
-                  keyboardType: TextInputType.multiline,
-                  cursorColor: Colors.white,
-                  autocorrect: true,
-                  textCapitalization: TextCapitalization.sentences,
-                  maxLines: 5,
-                  maxLength: 194,
-                  maxLengthEnforced: true,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  decoration: InputDecoration(
-                    //labelText: 'Anxiety Entry:',
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 1.0,
-                      ),
-                    ),
+                        decoration: InputDecoration(
+                          //labelText: 'Anxiety Entry:',
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 1.0,
+                            ),
+                          ),
 
-                    labelStyle: TextStyle(
-                      color: Colors.white,
-                    ),
-                    border: OutlineInputBorder(),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 1.0,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please make you anxiety entry.';
-                    }
-                    return null;
-                  },
-                  onSaved: (val) {
-                    setState(() {
-                      anxEntry.setAnxEntry(val);
-                    });
-                  },
-                  //onSaved: (val) => setState()
-                  //setState(() => anxEntry.setAnxEntry(val.toString())),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    RaisedButton(
-                      color: Colors.white,
-                      textColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                          style: BorderStyle.solid,
-                          width: 5.0,
-                          color: Colors.purple
+                          labelStyle: TextStyle(
+                            color: Colors.white,
+                          ),
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                              width: 1.0,
+                            ),
+                          ),
                         ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please make you anxiety entry.';
+                          }
+                          return null;
+                        },
+                        onSaved: (val) {
+                          setState(() {
+                            anxEntry.setAnxEntry(val);
+                          });
+                        },
+                        //onSaved: (val) => setState()
+                        //setState(() => anxEntry.setAnxEntry(val.toString())),
                       ),
-                      splashColor: Colors.redAccent,
-                      onPressed: () {
-                        final form = _formKey.currentState;
-                        if (form.validate()) {
-                          form.save();
-                        }
-                        Scaffold.of(context).showSnackBar(
-                            SnackBar(content: Text('Processing Data')));
-                      },
-                      child: Text('Submit'),
-                    ),
-                  ],
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          RaisedButton(
+                            color: Colors.white,
+                            textColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
+                                style: BorderStyle.solid,
+                                width: 5.0,
+                                color: Colors.purple
+                              ),
+                            ),
+                            splashColor: Colors.redAccent,
+                            onPressed: () {
+                              final form = _formKey.currentState;
+                              if (form.validate()) {
+                                form.save();
+                                FocusScope.of(context).requestFocus(FocusNode());
+                              }
+                              Scaffold.of(context).showSnackBar(
+                                  SnackBar(content: Text('Processing Data')));
+                            },
+                            child: Text('Submit'),
+                          ),
+                        ],
+                      ),
+                      //Data to later save to database.
+                      Text(anxEntry.getAnxEntry()),
+                      Text(displayDate(anxEntry.getDate())),
+                      Text(anxEntry.getTodayWas().toString()),
+                      RaisedButton(
+                        child: Text('Return to homepage'),
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('/');
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                //Data to later save to database.
-                Text(anxEntry.getAnxEntry()),
-                Text(displayDate(anxEntry.getDate())),
-                Text(anxEntry.getTodayWas().toString()),
-                RaisedButton(
-                  child: Text('Return to homepage'),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/');
-                  },
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
+///This function is used by the radio buttons. It is how the "change which one is selected"
+  ///functionality works. When the 'group value' and the 'value' are the same, then that radio
+  ///button get selected.
   void selectThisRadioButton(int e) {
     setState(() {
       if (e == 1) {
@@ -269,7 +283,8 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       }
     });
   }
-
+  ///Take the DateTime object and displays only the date
+  ///in month/day/year format.
   String displayDate(DateTime date) {
     return date.month.toString() +
         '/' +
