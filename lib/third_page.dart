@@ -1,5 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:anxiety_tracking_front_end/today_was.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
 import 'anxiety_entry_entity.dart';
 
 ///This is the anxiety entry route. It take a date for the previous route, the calender page.
@@ -22,6 +27,19 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _anxEntryController = TextEditingController();
   int groupValue;
+  String apiAnxietyEntry = "";
+  //String apiAnxietyEntry = getData('http://localhost:60000/test/test').toString();
+
+  _AnxietyEntryPageState() {
+    getData('http://localhost:60000/test/test').then((val) => setState(() async {
+      List tempList = new List<String>();
+      //val = "ghost";
+      tempList.add(val);
+      this.apiAnxietyEntry = tempList[0][0];
+
+    }));
+    //apiAnxietyEntry = getData('http://localhost:60000/test/test').toString();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +118,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                             activeColor: Colors.black,
                             value: 1,// When matches 'groupValue' the radio button gets selected.
                             groupValue: this.groupValue,
+
                           ),
                           Text('Awesome'),
                           Radio(
@@ -231,6 +250,8 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                       Text(anxEntry.getAnxEntry()),
                       Text(displayDate(anxEntry.getDate())),
                       Text(anxEntry.getTodayWas().toString()),
+                      //Text(getData('http://localhost:60000/test/test').toString()),
+                      Text(apiAnxietyEntry),
                       RaisedButton(
                         child: Text('Return to homepage'),
                         onPressed: () {
@@ -291,5 +312,22 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
         date.day.toString() +
         '/' +
         date.year.toString();
+  }
+  static Future<List<dynamic>> getData(String url) async {
+    List tempList = new List<String>();
+    tempList.add('failed to get test data.');
+    http.Response response = await http.get(
+      Uri.encodeFull(url),
+        headers: {
+        "Accept" : "application/json"
+        }
+    );
+    if(response.statusCode == 200) {
+      json.decode(response.body);
+    } else {
+      return tempList;
+    }
+    //List data = json.decode(response.body);
+    //return response.body;
   }
 }
