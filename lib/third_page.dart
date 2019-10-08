@@ -5,7 +5,7 @@ import 'package:anxiety_tracking_front_end/today_was.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'anxiety_entry_entity.dart';
+import 'models/anxiety.dart';
 
 ///This is the anxiety entry route. It take a date for the previous route, the calender page.
 ///It is a stateful widget.
@@ -20,7 +20,7 @@ class AnxietyEntryPage extends StatefulWidget {
 }
 
 class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
-  AnxietyTrackingEntity _anxEntry = AnxietyTrackingEntity(null, 'No entry given.', TodayWas.NotSelectedYet);
+  Anxiety _anxEntry = Anxiety(null, 'No entry given.', TodayWas.NotSelectedYet);
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _anxEntryController = TextEditingController();
   int groupValue;
@@ -35,7 +35,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
 
   @override
   Widget build(BuildContext context) {
-    AnxietyTrackingEntity anxEntry = _anxEntry;
+    Anxiety anxEntry = _anxEntry;
     _anxEntry.setDate(widget.date);
 
     return Scaffold(
