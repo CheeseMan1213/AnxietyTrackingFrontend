@@ -20,25 +20,17 @@ class AnxietyEntryPage extends StatefulWidget {
 }
 
 class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
-  AnxietyTrackingEntity _anxEntry =
-      AnxietyTrackingEntity(null, 'No entry given.', TodayWas.NotSelectedYet);
-
-  //AnxietyTrackingEntity _anxEntry = AnxietyTrackingEntity(widget.date, 'No entry given.', TodayWas.NotSelectedYet);
+  AnxietyTrackingEntity _anxEntry = AnxietyTrackingEntity(null, 'No entry given.', TodayWas.NotSelectedYet);
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _anxEntryController = TextEditingController();
   int groupValue;
-  String apiAnxietyEntry = "";
-  //String apiAnxietyEntry = getData('http://localhost:60000/test/test').toString();
+  //final String url = 'http://localhost:60000/test/test';
+  List data;
 
-  _AnxietyEntryPageState() {
-    getData('http://localhost:60000/test/test').then((val) => setState(() async {
-      List tempList = new List<String>();
-      //val = "ghost";
-      tempList.add(val);
-      this.apiAnxietyEntry = tempList[0][0];
-
-    }));
-    //apiAnxietyEntry = getData('http://localhost:60000/test/test').toString();
+  @override
+  void initState() {
+    this.getJsonData('http://localhost:60000/test/test');
+    super.initState();
   }
 
   @override
@@ -236,7 +228,8 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                             onPressed: () {
                               final form = _formKey.currentState;
                               if (form.validate()) {
-                                form.save();
+                                form.save();//save data to local variables.
+                                //postJsonData();
                                 FocusScope.of(context).requestFocus(FocusNode());
                               }
                               Scaffold.of(context).showSnackBar(
@@ -250,8 +243,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                       Text(anxEntry.getAnxEntry()),
                       Text(displayDate(anxEntry.getDate())),
                       Text(anxEntry.getTodayWas().toString()),
-                      //Text(getData('http://localhost:60000/test/test').toString()),
-                      Text(apiAnxietyEntry),
+                      asyncDataTextWidget(),
                       RaisedButton(
                         child: Text('Return to homepage'),
                         onPressed: () {
@@ -313,21 +305,39 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
         '/' +
         date.year.toString();
   }
-  static Future<List<dynamic>> getData(String url) async {
-    List tempList = new List<String>();
-    tempList.add('failed to get test data.');
-    http.Response response = await http.get(
-      Uri.encodeFull(url),
-        headers: {
-        "Accept" : "application/json"
-        }
+  Future<String> getJsonData(url) async {
+    var response  = await http.get(
+      //Encode the url
+        Uri.encodeFull(url),
+        //only accept json response
+        headers: {"Accept": "application/json"}
     );
-    if(response.statusCode == 200) {
-      json.decode(response.body);
+    setState(() {
+      var convertDataToJson = json.decode(response.body);
+      //data = convertDataToJson['results'];
+      this.data = convertDataToJson;
+    });
+    return 'Success';
+  }
+  Future<String> postJsonData(url) async {
+    var response  = await http.post(
+      //Encode the url
+        Uri.encodeFull(url),
+        //only accept json response
+        headers: {"Accept": "application/json"}
+    );
+    setState(() {
+      var convertDataToJson = json.decode(response.body);
+      //data = convertDataToJson['results'];
+      this.data = convertDataToJson;
+    });
+    return 'Success';
+  }
+  Text asyncDataTextWidget() {
+    if(this.data == null){
+    return Text('LOADING.....');
     } else {
-      return tempList;
+    return Text(this.data[0]['firstName'] +' '+ this.data[0]['lastName'] +' '+ this.data[0]['ttime']);
     }
-    //List data = json.decode(response.body);
-    //return response.body;
   }
 }
