@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'models/anxiety.dart';
+import 'api_services/anxiety_entity_service/anxiety_service.dart';
 
 ///This is the anxiety entry route. It take a date for the previous route, the calender page.
 ///It is a stateful widget.
@@ -20,23 +21,24 @@ class AnxietyEntryPage extends StatefulWidget {
 }
 
 class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
-  Anxiety _anxEntry = Anxiety(null, 'No entry given.', TodayWas.NotSelectedYet);
+  Anxiety _anxEntry = Anxiety(null, 'No entry given.', TodayWas.NotSelectedYet.toString());
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _anxEntryController = TextEditingController();
   int groupValue;
-  //final String url = 'http://localhost:60000/test/test';
-  List data;
+  List<dynamic> _data;
 
   @override
   void initState() {
-    this.getJsonData('http://localhost:60000/test/test');
     super.initState();
+
+    _anxEntry.setDate(widget.date.toIso8601String());
+    this.getJsonData('http://localhost:60000/anxieties/' + _anxEntry.getDate());
   }
 
   @override
   Widget build(BuildContext context) {
-    Anxiety anxEntry = _anxEntry;
-    _anxEntry.setDate(widget.date);
+    //This page gets the date the user chose from the previous page.
+    //_anxEntry.setDate(widget.date.toIso8601String());
 
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +79,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                           Container(
                             color: Colors.white,
                             child: Text(
-                              displayDate(anxEntry.getDate()) + ':',
+                              displayDate(_anxEntry.getDate()) + ':',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 24.0,
@@ -205,7 +207,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                         },
                         onSaved: (val) {
                           setState(() {
-                            anxEntry.setAnxEntry(val);
+                            _anxEntry.setAnxEntry(val);
                           });
                         },
                         //onSaved: (val) => setState()
@@ -229,7 +231,8 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                               final form = _formKey.currentState;
                               if (form.validate()) {
                                 form.save();//save data to local variables.
-                                //postJsonData();
+                                //AnxietyService.postAnxiety('http://localhost:60000/anxieties', this._data[0].getDate(), this._data[0].getAnxEntry(), this._data[0].getTodayWas().toString());
+                                AnxietyService.postAnxiety('http://localhost:60000/anxieties', _anxEntry.getDate(), _anxEntry.getAnxEntry(), _anxEntry.getTodayWas().toString());
                                 FocusScope.of(context).requestFocus(FocusNode());
                               }
                               Scaffold.of(context).showSnackBar(
@@ -240,10 +243,10 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                         ],
                       ),
                       //Data to later save to database.
-                      Text(anxEntry.getAnxEntry()),
-                      Text(displayDate(anxEntry.getDate())),
-                      Text(anxEntry.getTodayWas().toString()),
-                      asyncDataTextWidget(),
+                      Text(_anxEntry.getAnxEntry()),
+                      Text(displayDate(_anxEntry.getDate())),
+                      Text(_anxEntry.getTodayWas().toString()),
+                      //asyncDataTextWidget(),
                       RaisedButton(
                         child: Text('Return to homepage'),
                         onPressed: () {
@@ -271,55 +274,73 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       switch (e) {
         case 1:
           this.groupValue = 1;
-          this._anxEntry.setTodayWas(TodayWas.Awesome);
+          this._anxEntry.setTodayWas(TodayWas.Awesome.toString());
           break;
         case 2:
           this.groupValue = 2;
-          this._anxEntry.setTodayWas(TodayWas.Good);
+          this._anxEntry.setTodayWas(TodayWas.Good.toString());
           break;
         case 3:
           this.groupValue = 3;
-          this._anxEntry.setTodayWas(TodayWas.Fine);
+          this._anxEntry.setTodayWas(TodayWas.Fine.toString());
           break;
         case 4:
           this.groupValue = 4;
-          this._anxEntry.setTodayWas(TodayWas.NotSoGood);
+          this._anxEntry.setTodayWas(TodayWas.NotSoGood.toString());
           break;
         case 5:
           this.groupValue = 5;
-          this._anxEntry.setTodayWas(TodayWas.Terrible);
+          this._anxEntry.setTodayWas(TodayWas.Terrible.toString());
           break;
         default:
           this.groupValue = 0;
-          this._anxEntry.setTodayWas(TodayWas.NotSelectedYet);
+          this._anxEntry.setTodayWas(TodayWas.NotSelectedYet.toString());
           break;
       }
     });
   }
   ///Take the DateTime object and displays only the date
   ///in month/day/year format.
-  String displayDate(DateTime date) {
-    return date.month.toString() +
+  String displayDate(String date) {
+    DateTime castedDate = DateTime.parse(date);
+    return castedDate.month.toString() +
         '/' +
-        date.day.toString() +
+        castedDate.day.toString() +
         '/' +
-        date.year.toString();
+        castedDate.year.toString();
   }
   Future<String> getJsonData(url) async {
     var response  = await http.get(
       //Encode the url
         Uri.encodeFull(url),
         //only accept json response
-        headers: {"Accept": "application/json"}
-    );
-    setState(() {
-      var convertDataToJson = json.decode(response.body);
-      //data = convertDataToJson['results'];
-      this.data = convertDataToJson;
-    });
-    return 'Success';
+        headers: {"Accept": "application/json"});
+    int statusCode = response.statusCode;
+
+    if (statusCode == 200) {
+      print('Successful Get.');
+      var convertDataToJson2 = json.decode(response.body);
+      List<dynamic> responses = convertDataToJson2
+          .map((j) => Anxiety.fromJson(j))
+          .toList();
+      this._data = responses;
+      if(this._data == null || this._data.isEmpty) {
+        _anxEntryController.text = "No entry for this date.";
+      }
+      else {
+        this._anxEntryController.text = _data[0].getAnxEntry();
+      }
+      setState(() {
+        //
+      });
+      return 'Successful Get.';
+    } else {
+      print('Failed Get. Status code: ' + statusCode.toString());
+      print(url);
+      return 'Failed Get.';
+    }
   }
-  Future<String> postJsonData(url) async {
+  /*Future<String> postJsonData(url) async {
     var response  = await http.post(
       //Encode the url
         Uri.encodeFull(url),
@@ -332,12 +353,12 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       this.data = convertDataToJson;
     });
     return 'Success';
-  }
+  }*/
   Text asyncDataTextWidget() {
-    if(this.data == null){
+    if(this._data == null){
     return Text('LOADING.....');
     } else {
-    return Text(this.data[0]['firstName'] +' '+ this.data[0]['lastName'] +' '+ this.data[0]['ttime']);
+    return Text(this._data[0]['firstName'] +' '+ this._data[0]['lastName'] +' '+ this._data[0]['ttime']);
     }
   }
 }
