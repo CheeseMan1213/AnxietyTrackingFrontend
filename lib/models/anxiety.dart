@@ -53,5 +53,32 @@ class Anxiety {
   void setTodayWas(todayWas) {
     this.todayWas = todayWas;
   }
+  int getTodayWasAsInteger() {
+
+    int val = 0;
+
+    switch (this.todayWas) {
+      case "TodayWas.Awesome":
+        val = 1;
+        break;
+      case "TodayWas.Good":
+        val = 2;
+        break;
+      case "TodayWas.Fine":
+        val = 3;
+        break;
+      case "TodayWas.NotSoGood":
+        val = 4;
+        break;
+      case "TodayWas.Terrible":
+        val = 5;
+        break;
+      default:
+        val = 0;
+        break;
+    }
+
+    return val;
+  }
 
 }
