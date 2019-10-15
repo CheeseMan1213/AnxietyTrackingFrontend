@@ -29,10 +29,9 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
 
   @override
   void initState() {
-    super.initState();
-
     _anxEntry.setDate(widget.date.toIso8601String());
-    this.getJsonData('http://localhost:60000/anxieties/' + _anxEntry.getDate());
+    this.getAnxietyByDate('http://localhost:60000/anxieties/' + _anxEntry.getDate());
+    super.initState();
   }
 
   @override
@@ -112,7 +111,6 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                             activeColor: Colors.black,
                             value: 1,// When matches 'groupValue' the radio button gets selected.
                             groupValue: this.groupValue,
-
                           ),
                           Text('Awesome'),
                           Radio(
@@ -309,7 +307,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
         '/' +
         castedDate.year.toString();
   }
-  Future<String> getJsonData(url) async {
+  Future<String> getAnxietyByDate(url) async {
     var response  = await http.get(
       //Encode the url
         Uri.encodeFull(url),
@@ -329,6 +327,8 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       }
       else {
         this._anxEntryController.text = _data[0].getAnxEntry();
+        selectThisRadioButton(this._data[0].getTodayWasAsInteger());
+        //final TodayWas todayWas = _data[0].getTodayWas();
       }
       setState(() {
         //
@@ -340,20 +340,6 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       return 'Failed Get.';
     }
   }
-  /*Future<String> postJsonData(url) async {
-    var response  = await http.post(
-      //Encode the url
-        Uri.encodeFull(url),
-        //only accept json response
-        headers: {"Accept": "application/json"}
-    );
-    setState(() {
-      var convertDataToJson = json.decode(response.body);
-      //data = convertDataToJson['results'];
-      this.data = convertDataToJson;
-    });
-    return 'Success';
-  }*/
   Text asyncDataTextWidget() {
     if(this._data == null){
     return Text('LOADING.....');
