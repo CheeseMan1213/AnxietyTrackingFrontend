@@ -32,13 +32,13 @@ class AnxietyService {
   }
   //Receives a object so the _id matches one already in the database, then changes the first
   //and last name and sends it off for the update.
-  static Future putAnxiety(String url, Anxiety anxietyUpdate) async {
+  static Future putAnxiety(String url, Anxiety anxietyToUpdate) async {
     var response = await http.put(
       //Encode the url
         Uri.encodeFull(url),
         //only accept json response
         headers: {"Content-type": "application/json"},
-        body: json.encode(anxietyUpdate.toJson()));
+        body: json.encode(anxietyToUpdate.toJson()));
     int statusCode = response.statusCode;
 
     if (statusCode == 200) {
