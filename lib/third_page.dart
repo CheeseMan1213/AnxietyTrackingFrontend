@@ -26,16 +26,33 @@ class AnxietyEntryPage extends StatefulWidget {
 }
 
 class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
+  static const String serverIP = "192.168.1.14";
+  //static const String serverIP = "' + serverIP + '";
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _anxEntryController = TextEditingController();
-  int groupValue;
+  //Sets the initial color to be the green gradient.
+  int groupValue = 1;
   var _data;
 
   @override
   void initState() {
-    this.getAnxietyByDate('http://localhost:60000/anxieties/' + widget.date.toIso8601String()).then((data) {
+    AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + widget.date.toIso8601String()).then((data) {
       setState(() {
         this._data = data;
+        if(this._data == null || this._data.isEmpty) {
+          _anxEntryController.text = "No entry yet.";
+          setState(() {
+            //
+          });
+        }
+        else {
+          //Populates text for field with date from database if it is there.
+          _anxEntryController.text = this._data[0].getAnxEntry();
+          //sets state of radio button from database.
+          selectThisRadioButton(this._data[0].getTodayWasAsInteger());setState(() {
+            //
+          });
+        }
       });
     });
     super.initState();
@@ -99,12 +116,9 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                   begin: FractionalOffset.topLeft,
                   end: FractionalOffset.bottomRight,
                   stops: [0.1, 0.5, 0.7, 0.9],
-                  colors: [
-                    Colors.green[800],
-                    Colors.green[600],
-                    Colors.green[400],
-                    Colors.green[200],
-                  ],
+                  //colors: [Colors.green[800], Colors.green[600], Colors.green[400], Colors.green[200],],
+                  //colors: gradientArray[4],
+                  colors: getGradient(),
                   //tileMode: TileMode.clamp
                 ),
               ),
@@ -261,6 +275,35 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                             textColor: Colors.black,
                             shape: RoundedRectangleBorder(
                               side: BorderSide(
+                                  style: BorderStyle.solid,
+                                  width: 5.0,
+                                  color: Colors.purple
+                              ),
+                            ),
+                            splashColor: Colors.redAccent,
+                            onPressed: () async {
+                              if(this._data != null && this._data.isNotEmpty) {
+                                await AnxietyService.deleteAnxiety('http://' + serverIP + ':60000/deleteAnxiety', this._data[0]);
+                                print("Did a delete.");
+                                Scaffold.of(context).showSnackBar(SnackBar(content: Text('Deleted this entry.')));
+                                await AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + widget.date.toIso8601String()).then((data) {
+                                  setState(() {
+                                    this._data = data;
+                                  });
+                                });
+                              }
+                              FocusScope.of(context).requestFocus(FocusNode());
+                              setState(() {
+                                //
+                              });
+                            },
+                            child: Text('Delete'),
+                          ),
+                          RaisedButton(
+                            color: Colors.white,
+                            textColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              side: BorderSide(
                                 style: BorderStyle.solid,
                                 width: 5.0,
                                 color: Colors.purple
@@ -271,22 +314,40 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                               final form = _formKey.currentState;
                               if (form.validate()) {
                                 form.save();//save data to local variables.
+                                //If there is no entry, add a new one once.
                                 if(this._data == null || this._data.isEmpty) {
-                                  await AnxietyService.postAnxiety('http://localhost:60000/anxieties', widget.date.toIso8601String(), _anxEntryController.text, selectThisRadioButton(this.groupValue));
+                                  await AnxietyService.postAnxiety('http://' + serverIP + ':60000/anxieties', widget.date.toIso8601String(), _anxEntryController.text, selectThisRadioButton(this.groupValue));
                                   print("Did a post.");
                                   Scaffold.of(context).showSnackBar(SnackBar(content: Text('Created new entry.')));
                                   //This line fixes a bug where if the user picks a date with no entry in the database,
                                   // it will continue to create new entries, instead of create once, then update.
-                                  await this.getAnxietyByDate('http://localhost:60000/anxieties/' + widget.date.toIso8601String()).then((data) {
+                                  await AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + widget.date.toIso8601String()).then((data) {
                                     setState(() {
                                       this._data = data;
                                     });
                                   });
+                                  //if it is still null or empty after the post.
+                                  if(this._data == null || this._data.isEmpty) {
+                                    _anxEntryController.text = "There was an error with the post.";
+                                    setState(() {
+                                      //
+                                    });
+                                  }
+                                  else {
+                                    //Populates text for field with date from database if it is there.
+                                    _anxEntryController.text = this._data[0].getAnxEntry();
+                                    //sets state of radio button from database.
+                                    selectThisRadioButton(this._data[0].getTodayWasAsInteger());setState(() {
+                                      //
+                                    });
+                                  }
                                 }
+                                //else update the existing one.
                                 else {
+                                  print('made it to the else.');
                                   this._data[0].setAnxEntry(_anxEntryController.text);
                                   this._data[0].setTodayWas(selectThisRadioButton(this.groupValue).toString());
-                                  await AnxietyService.putAnxiety('http://localhost:60000/anxieties', this._data[0]);
+                                  await AnxietyService.putAnxiety('http://' + serverIP + ':60000/anxieties', this._data[0]);
                                   print("Did a put.");
                                   Scaffold.of(context).showSnackBar(SnackBar(content: Text('Updated this entry.')));
                                   print(this._data);
@@ -365,7 +426,26 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
         '/' +
         castedDate.year.toString();
   }
-  ///Takes a URL with a date added to the end, and sends it off to get one object back from the database.
+  ///This method uses the state of the radio buttons to also adjust the background color.
+  List getGradient() {
+    var gradientWhite = [Colors.white, Colors.white, Colors.white, Colors.white];
+    var gradientGreen = [Colors.green[800], Colors.green[600], Colors.green[400], Colors.green[200]];
+    var gradientLightGreen = [Colors.lightGreen[800], Colors.lightGreen[600], Colors.lightGreen[400], Colors.lightGreen[200]];
+    var gradientYellow = [Colors.yellow[800], Colors.yellow[600], Colors.yellow[400], Colors.yellow[200]];
+    var gradientOrange = [Colors.orange[800], Colors.orange[600], Colors.orange[400], Colors.orange[200]];
+    var gradientRed = [Colors.red[800], Colors.red[600], Colors.red[400], Colors.red[200]];
+    var gradientArray = new List(6);
+
+    gradientArray[0] = gradientWhite;
+    gradientArray[1] = gradientGreen;
+    gradientArray[2] = gradientLightGreen;
+    gradientArray[3] = gradientYellow;
+    gradientArray[4] = gradientOrange;
+    gradientArray[5] = gradientRed;
+
+    return gradientArray[this.groupValue];
+  }
+  /*///Takes a URL with a date added to the end, and sends it off to get one object back from the database.
   Future getAnxietyByDate(url) async {
     var response  = await http.get(
       //Encode the url
@@ -379,7 +459,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       var convertDataToJson2 = json.decode(response.body);
       var responses = convertDataToJson2.map((j) => Anxiety.fromJson(j)).toList();
       if(responses == null || responses.isEmpty) {
-        _anxEntryController.text = "No entry for this date.";
+        this._anxEntryController.text = "No entry for this date.";
       }
       else {
         //Populates text for field with date from database if it is there.
@@ -396,5 +476,5 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       print(url);
       return null;
     }
-  }
+  }*/
 }
