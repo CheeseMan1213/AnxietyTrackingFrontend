@@ -10,6 +10,30 @@ import 'package:http/http.dart' as http;
 import '../../models/anxiety.dart';
 class AnxietyService {
 
+  ///Takes a URL with a date added to the end, and sends it off to get one object back from the database.
+  static Future getAnxietyByDate(url) async {
+    var response  = await http.get(
+      //Encode the url
+        Uri.encodeFull(url),
+        //only accept json response
+        headers: {"Accept": "application/json"});
+    int statusCode = response.statusCode;
+    //Checks status code.
+    if (statusCode == 200) {
+      print('Successful Get.');
+      var convertDataToJson2 = json.decode(response.body);
+      var responses = convertDataToJson2.map((j) => Anxiety.fromJson(j)).toList();
+      /*setState(() {
+        //
+      });*/
+      return responses;
+    } else {
+      print('Failed Get. Status code: ' + statusCode.toString());
+      print(url);
+      return null;
+    }
+  }
+
   //Takes a first and last name along with the post url and creates a new name in the database.
   static Future postAnxiety(String url, String date, String anxEntry, String todayWas) async {
     Anxiety newAnxietyEntry = new Anxiety(date, anxEntry, todayWas);
