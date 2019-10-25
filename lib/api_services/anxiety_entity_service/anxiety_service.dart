@@ -7,7 +7,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../models/anxiety.dart';
+import '../../models/anxiety_model/anxiety.dart';
 class AnxietyService {
 
   ///Takes a URL with a date added to the end, and sends it off to get one object back from the database.
