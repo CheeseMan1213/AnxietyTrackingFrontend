@@ -10,6 +10,9 @@ import 'api_services/anxiety_entity_service/anxiety_service.dart';
 import 'my_widgets/delete_button.dart';
 
 import 'static_server_ip/static_server_ip.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'my_widgets/loading_screen.dart';
+import 'models/anxiety_model/scoped_anxiety.dart';
 
 ///This is the anxiety entry route. It take a date for the previous route, the calender page.
 ///It is a stateful widget.
@@ -29,6 +32,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
   //Sets the initial color to be the green gradient.
   int groupValue = 1;
   var _data;
+  final ScopedAnxiety scopedAnxiety = ScopedAnxiety();// ScopedModel that allows for state management.
 
   @override
   void initState() {
@@ -60,284 +64,257 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
 
     //check for before the async call has returned. This is the loading screen.
     if(_data == null) {
-      return Scaffold(
-        body: Center(
-          child: Container(
-            padding: const EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: FractionalOffset.topLeft,
-                end: FractionalOffset.bottomRight,
-                stops: [0.1, 0.5, 0.7, 0.9],
-                colors: [
-                  Colors.green[800],
-                  Colors.green[600],
-                  Colors.green[400],
-                  Colors.green[200],
-                ],
-                //tileMode: TileMode.clamp
-              ),
-            ),
-            child: Center(
-              child: Text(
-                'Loading....',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 36,
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
+      return LoadingScreen();
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Anxiety Entry'),
-      ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).requestFocus(FocusNode());
-        },
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height,
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: FractionalOffset.topLeft,
-                  end: FractionalOffset.bottomRight,
-                  stops: [0.1, 0.5, 0.7, 0.9],
-                  //colors: [Colors.green[800], Colors.green[600], Colors.green[400], Colors.green[200],],
-                  //colors: gradientArray[4],
-                  colors: getGradient(),
-                  //tileMode: TileMode.clamp
-                ),
+    return ScopedModel<ScopedAnxiety>(
+      model: scopedAnxiety,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Anxiety Entry'),
+        ),
+        body: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).requestFocus(FocusNode());
+          },
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height,
               ),
-              child: Builder(
-                builder: (context) => Form(
-                  key: this._formKey,
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.white,
-                            child: Text(
-                              displayDate(widget.date.toIso8601String()) + ':',
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: FractionalOffset.topLeft,
+                    end: FractionalOffset.bottomRight,
+                    stops: [0.1, 0.5, 0.7, 0.9],
+                    //colors: [Colors.green[800], Colors.green[600], Colors.green[400], Colors.green[200],],
+                    //colors: gradientArray[4],
+                    colors: getGradient(),
+                    //tileMode: TileMode.clamp
+                  ),
+                ),
+                child: Builder(
+                  builder: (context) => Form(
+                    key: this._formKey,
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              color: Colors.white,
+                              child: Text(
+                                displayDate(widget.date.toIso8601String()) + ':',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 24.0,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          //width: 200,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              'Today was:',
+                              //textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 24.0,
+                                fontSize: 36.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          // Row 1
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Radio(
+                              // For Awesome
+                              onChanged: (int e) => selectThisRadioButton(e),
+                              activeColor: Colors.black,
+                              value: 1,// When matches 'groupValue' the radio button gets selected.
+                              groupValue: this.groupValue,
+                            ),
+                            Text('Awesome'),
+                            Radio(
+                              // For Good
+                              onChanged: (int e) => selectThisRadioButton(e),
+                              activeColor: Colors.black,
+                              value: 2,// When matches 'groupValue' the radio button gets selected.
+                              groupValue: this.groupValue,
+                            ),
+                            Text('Good'),
+                            Radio(
+                              // For Fine
+                              onChanged: (int e) => selectThisRadioButton(e),
+                              activeColor: Colors.black,
+                              value: 3,// When matches 'groupValue' the radio button gets selected.
+                              groupValue: this.groupValue,
+                            ),
+                            Text('Fine'),
+                          ],
+                        ),
+                        Row(
+                          // Row 2
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Radio(
+                              // For NotSoGood
+                              onChanged: (int e) => selectThisRadioButton(e),
+                              activeColor: Colors.black,
+                              value: 4,// When matches 'groupValue' the radio button gets selected.
+                              groupValue: this.groupValue,
+                            ),
+                            Text('Not so good'),
+                            Radio(
+                              // For Terrible
+                              onChanged: (int e) => selectThisRadioButton(e),
+                              activeColor: Colors.black,
+                              value: 5,// When matches 'groupValue' the radio button gets selected.
+                              groupValue: this.groupValue,
+                            ),
+                            Text('Terrible'),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Because:',
+                              //textAlign: TextAlign.left,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 36.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        TextFormField(
+                          //The controller adds additional functionality and data retrieval to the TextFormField()
+                          controller: this._anxEntryController,
+                          keyboardType: TextInputType.multiline,
+                          cursorColor: Colors.white,
+                          autocorrect: true,
+                          textCapitalization: TextCapitalization.sentences,
+                          maxLines: 5,
+                          maxLength: 194,
+                          maxLengthEnforced: true,
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Anxiety Entry:',
+                            hintText: "No entry yet.",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 1.0,
+                              ),
+                            ),
+                            labelStyle: TextStyle(
+                              color: Colors.white,
+                            ),
+                            border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                                width: 1.0,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                      Row(
-                        //width: 200,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'Today was:',
-                            //textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 36.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        // Row 1
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Radio(
-                            // For Awesome
-                            onChanged: (int e) => selectThisRadioButton(e),
-                            activeColor: Colors.black,
-                            value: 1,// When matches 'groupValue' the radio button gets selected.
-                            groupValue: this.groupValue,
-                          ),
-                          Text('Awesome'),
-                          Radio(
-                            // For Good
-                            onChanged: (int e) => selectThisRadioButton(e),
-                            activeColor: Colors.black,
-                            value: 2,// When matches 'groupValue' the radio button gets selected.
-                            groupValue: this.groupValue,
-                          ),
-                          Text('Good'),
-                          Radio(
-                            // For Fine
-                            onChanged: (int e) => selectThisRadioButton(e),
-                            activeColor: Colors.black,
-                            value: 3,// When matches 'groupValue' the radio button gets selected.
-                            groupValue: this.groupValue,
-                          ),
-                          Text('Fine'),
-                        ],
-                      ),
-                      Row(
-                        // Row 2
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Radio(
-                            // For NotSoGood
-                            onChanged: (int e) => selectThisRadioButton(e),
-                            activeColor: Colors.black,
-                            value: 4,// When matches 'groupValue' the radio button gets selected.
-                            groupValue: this.groupValue,
-                          ),
-                          Text('Not so good'),
-                          Radio(
-                            // For Terrible
-                            onChanged: (int e) => selectThisRadioButton(e),
-                            activeColor: Colors.black,
-                            value: 5,// When matches 'groupValue' the radio button gets selected.
-                            groupValue: this.groupValue,
-                          ),
-                          Text('Terrible'),
-                        ],
-                      ),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            'Because:',
-                            //textAlign: TextAlign.left,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 36.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                      TextFormField(
-                        //The controller adds additional functionality and data retrieval to the TextFormField()
-                        controller: this._anxEntryController,
-                        keyboardType: TextInputType.multiline,
-                        cursorColor: Colors.white,
-                        autocorrect: true,
-                        textCapitalization: TextCapitalization.sentences,
-                        maxLines: 5,
-                        maxLength: 194,
-                        maxLengthEnforced: true,
-                        style: TextStyle(
-                          color: Colors.white,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Please make you anxiety entry.';
+                            }
+                            if(this.groupValue == null || this.groupValue == 0) {
+                              return 'Please select how your day was.';
+                            }
+                            return null;
+                          },
+                          onSaved: (val) {
+                            setState(() {
+                              //_anxEntry.setAnxEntry(val);
+                              //_data[0].setAnxEntry(val);
+                            });
+                          },
                         ),
-                        decoration: InputDecoration(
-                          labelText: 'Anxiety Entry:',
-                          hintText: "No entry yet.",
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            DeleteButton(widget.date.toIso8601String(), this._data),
+                            RaisedButton(
                               color: Colors.white,
-                              width: 1.0,
-                            ),
-                          ),
-                          labelStyle: TextStyle(
-                            color: Colors.white,
-                          ),
-                          border: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                              width: 1.0,
-                            ),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please make you anxiety entry.';
-                          }
-                          if(this.groupValue == null || this.groupValue == 0) {
-                            return 'Please select how your day was.';
-                          }
-                          return null;
-                        },
-                        onSaved: (val) {
-                          setState(() {
-                            //_anxEntry.setAnxEntry(val);
-                            //_data[0].setAnxEntry(val);
-                          });
-                        },
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          DeleteButton(widget.date.toIso8601String(), this._data, serverIP),
-                          RaisedButton(
-                            color: Colors.white,
-                            textColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                style: BorderStyle.solid,
-                                width: 5.0,
-                                color: Colors.purple
+                              textColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                  style: BorderStyle.solid,
+                                  width: 5.0,
+                                  color: Colors.purple
+                                ),
                               ),
-                            ),
-                            splashColor: Colors.redAccent,
-                            onPressed: () async {
-                              final form = _formKey.currentState;
-                              if (form.validate()) {
-                                form.save();//save data to local variables.
-                                //If there is no entry, add a new one once.
-                                if(this._data == null || this._data.isEmpty) {
-                                  await AnxietyService.postAnxiety('http://' + serverIP + ':60000/anxieties', widget.date.toIso8601String(), _anxEntryController.text, selectThisRadioButton(this.groupValue));
-                                  print("Did a post.");
-                                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Created new entry.')));
-                                  //This line fixes a bug where if the user picks a date with no entry in the database,
-                                  // it will continue to create new entries, instead of create once, then update.
-                                  await AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + widget.date.toIso8601String()).then((data) {
-                                    setState(() {
-                                      this._data = data;
-                                    });
-                                  });
-                                  //if it is still null or empty after the post.
+                              splashColor: Colors.redAccent,
+                              onPressed: () async {
+                                final form = _formKey.currentState;
+                                if (form.validate()) {
+                                  form.save();//save data to local variables.
+                                  //If there is no entry, add a new one once.
                                   if(this._data == null || this._data.isEmpty) {
-                                    _anxEntryController.text = "There was an error with the post.";
-                                    setState(() {
-                                      //
+                                    await AnxietyService.postAnxiety('http://' + serverIP + ':60000/anxieties', widget.date.toIso8601String(), _anxEntryController.text, selectThisRadioButton(this.groupValue));
+                                    print("Did a post.");
+                                    Scaffold.of(context).showSnackBar(SnackBar(content: Text('Created new entry.')));
+                                    //This line fixes a bug where if the user picks a date with no entry in the database,
+                                    // it will continue to create new entries, instead of create once, then update.
+                                    await AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + widget.date.toIso8601String()).then((data) {
+                                      setState(() {
+                                        this._data = data;
+                                      });
                                     });
+                                    //if it is still null or empty after the post.
+                                    if(this._data == null || this._data.isEmpty) {
+                                      _anxEntryController.text = "There was an error with the post.";
+                                      setState(() {
+                                        //
+                                      });
+                                    }
+                                    else {
+                                      //Populates text for field with date from database if it is there.
+                                      _anxEntryController.text = this._data[0].getAnxEntry();
+                                      //sets state of radio button from database.
+                                      selectThisRadioButton(this._data[0].getTodayWasAsInteger());setState(() {
+                                        //
+                                      });
+                                    }
                                   }
+                                  //else update the existing one.
                                   else {
-                                    //Populates text for field with date from database if it is there.
-                                    _anxEntryController.text = this._data[0].getAnxEntry();
-                                    //sets state of radio button from database.
-                                    selectThisRadioButton(this._data[0].getTodayWasAsInteger());setState(() {
-                                      //
-                                    });
+                                    print('made it to the else.');
+                                    this._data[0].setAnxEntry(_anxEntryController.text);
+                                    this._data[0].setTodayWas(selectThisRadioButton(this.groupValue).toString());
+                                    await AnxietyService.putAnxiety('http://' + serverIP + ':60000/anxieties', this._data[0]);
+                                    print("Did a put.");
+                                    Scaffold.of(context).showSnackBar(SnackBar(content: Text('Updated this entry.')));
+                                    print(this._data);
                                   }
+                                  FocusScope.of(context).requestFocus(FocusNode());
+                                  setState(() {
+                                    //
+                                  });
                                 }
-                                //else update the existing one.
-                                else {
-                                  print('made it to the else.');
-                                  this._data[0].setAnxEntry(_anxEntryController.text);
-                                  this._data[0].setTodayWas(selectThisRadioButton(this.groupValue).toString());
-                                  await AnxietyService.putAnxiety('http://' + serverIP + ':60000/anxieties', this._data[0]);
-                                  print("Did a put.");
-                                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Updated this entry.')));
-                                  print(this._data);
-                                }
-                                FocusScope.of(context).requestFocus(FocusNode());
-                                setState(() {
-                                  //
-                                });
-                              }
-                            },
-                            child: Text('Submit'),
-                          ),
-                        ],
-                      ),
-                      RaisedButton(
-                        child: Text('Return to homepage'),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('/');
-                        },
-                      ),
-                    ],
+                              },
+                              child: Text('Submit'),
+                            ),
+                          ],
+                        ),
+                        RaisedButton(
+                          child: Text('Return to homepage'),
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('/');
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
