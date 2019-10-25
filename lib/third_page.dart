@@ -3,16 +3,13 @@
  * https://flutter.institute/run-async-operation-on-widget-creation/
  */
 
-
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:anxiety_tracking_front_end/today_was.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
-import 'models/anxiety.dart';
 import 'api_services/anxiety_entity_service/anxiety_service.dart';
+import 'my_widgets/delete_button.dart';
+
+import 'static_server_ip/static_server_ip.dart';
 
 ///This is the anxiety entry route. It take a date for the previous route, the calender page.
 ///It is a stateful widget.
@@ -26,8 +23,7 @@ class AnxietyEntryPage extends StatefulWidget {
 }
 
 class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
-  static const String serverIP = "192.168.1.14";
-  //static const String serverIP = "' + serverIP + '";
+  static const String serverIP = StaticServerIP.serverIP;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _anxEntryController = TextEditingController();
   //Sets the initial color to be the green gradient.
@@ -40,7 +36,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
       setState(() {
         this._data = data;
         if(this._data == null || this._data.isEmpty) {
-          _anxEntryController.text = "No entry yet.";
+          _anxEntryController.text = "";//No entry yet.
           setState(() {
             //
           });
@@ -233,7 +229,8 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                           color: Colors.white,
                         ),
                         decoration: InputDecoration(
-                          //labelText: 'Anxiety Entry:',
+                          labelText: 'Anxiety Entry:',
+                          hintText: "No entry yet.",
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                               color: Colors.white,
@@ -270,35 +267,7 @@ class _AnxietyEntryPageState extends State<AnxietyEntryPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          RaisedButton(
-                            color: Colors.white,
-                            textColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                  style: BorderStyle.solid,
-                                  width: 5.0,
-                                  color: Colors.purple
-                              ),
-                            ),
-                            splashColor: Colors.redAccent,
-                            onPressed: () async {
-                              if(this._data != null && this._data.isNotEmpty) {
-                                await AnxietyService.deleteAnxiety('http://' + serverIP + ':60000/deleteAnxiety', this._data[0]);
-                                print("Did a delete.");
-                                Scaffold.of(context).showSnackBar(SnackBar(content: Text('Deleted this entry.')));
-                                await AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + widget.date.toIso8601String()).then((data) {
-                                  setState(() {
-                                    this._data = data;
-                                  });
-                                });
-                              }
-                              FocusScope.of(context).requestFocus(FocusNode());
-                              setState(() {
-                                //
-                              });
-                            },
-                            child: Text('Delete'),
-                          ),
+                          DeleteButton(widget.date.toIso8601String(), this._data, serverIP),
                           RaisedButton(
                             color: Colors.white,
                             textColor: Colors.black,
