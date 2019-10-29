@@ -8,10 +8,14 @@ class ScopedAnxiety extends Model {
   AnxietyBabyClass anxietyBabyClass = new AnxietyBabyClass();
   static const String serverIP = StaticServerIP.serverIP;
 
-  getData(String date) async {
+  Future getData(String date) async {
     await AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + date).then((data) {
       anxietyBabyClass.data = data;
       notifyListeners();
     });
+  }
+  void updateGradientColor(int i) {
+    anxietyBabyClass.groupValue = i;
+    notifyListeners();
   }
 }
