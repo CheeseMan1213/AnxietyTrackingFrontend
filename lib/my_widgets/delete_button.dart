@@ -6,10 +6,9 @@ import '../models/anxiety_model/scoped_anxiety.dart';
 
 class DeleteButton extends StatelessWidget {
   final String _date;
-  var _data;
   static const String serverIP = StaticServerIP.serverIP;
 
-  DeleteButton(this._date, this._data);
+  DeleteButton(this._date);
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +26,17 @@ class DeleteButton extends StatelessWidget {
               ),
               splashColor: Colors.redAccent,
               onPressed: () async {
-                if (this._data != null && this._data.isNotEmpty) {
-                  await AnxietyService.deleteAnxiety('http://' + serverIP + ':60000/deleteAnxiety', this._data[0]);
-                  await model.getData(this._date);
-                  print("Did a delete.");
-                  Scaffold.of(context).showSnackBar(SnackBar(content: Text('Deleted this entry.')));
+                if (model.anxietyBabyClass.data != null && model.anxietyBabyClass.data.isNotEmpty) {
+                  await AnxietyService.deleteAnxiety('http://' + serverIP + ':60000/deleteAnxiety', model.anxietyBabyClass.data[0]).then((data) async {
+                    print("Did a delete.");
+                    Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(seconds: 1), content: Text('Deleted this entry.')));
+                  });
+                  //Gives 1 second for the user to be able to see the message from the SnackBar.
+                  await Future.delayed(Duration(seconds: 1));
+                  //Automatically goes back to the calendar page.
+                  Navigator.of(context).pop();
                 }
-                FocusScope.of(context).requestFocus(FocusNode());
+                //FocusScope.of(context).requestFocus(FocusNode());
               },
               child: Text('Delete'),
             ));
