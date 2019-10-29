@@ -3,4 +3,6 @@
 ///This particular one is meant to be used with the anxiety model.
 class AnxietyBabyClass {
   var data = null;
+  //Sets the initial color to be the green gradient.
+  int groupValue = 1;
 }
