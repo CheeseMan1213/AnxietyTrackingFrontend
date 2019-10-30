@@ -9,13 +9,13 @@ class ScopedAnxiety extends Model {
   static const String serverIP = StaticServerIP.serverIP;
 
   Future getData(String date) async {
-    await AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + date).then((data) {
+    await AnxietyService.getAnxietyByDate('http://' + serverIP + '/anxieties/' + date).then((data) {
       anxietyBabyClass.data = data;
       notifyListeners();
     });
   }
   void updateGradientColor(int i) {
     anxietyBabyClass.groupValue = i;
-    notifyListeners();
+    //notifyListeners();
   }
 }
