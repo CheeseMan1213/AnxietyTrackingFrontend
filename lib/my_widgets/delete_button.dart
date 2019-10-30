@@ -27,7 +27,7 @@ class DeleteButton extends StatelessWidget {
               splashColor: Colors.redAccent,
               onPressed: () async {
                 if (model.anxietyBabyClass.data != null && model.anxietyBabyClass.data.isNotEmpty) {
-                  await AnxietyService.deleteAnxiety('http://' + serverIP + ':60000/deleteAnxiety', model.anxietyBabyClass.data[0]).then((data) async {
+                  await AnxietyService.deleteAnxiety('http://' + serverIP + '/deleteAnxiety', model.anxietyBabyClass.data[0]).then((data) async {
                     print("Did a delete.");
                     Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(seconds: 1), content: Text('Deleted this entry.')));
                   });
