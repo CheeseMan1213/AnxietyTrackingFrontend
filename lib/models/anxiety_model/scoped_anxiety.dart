@@ -16,6 +16,6 @@ class ScopedAnxiety extends Model {
   }
   void updateGradientColor(int i) {
     anxietyBabyClass.groupValue = i;
-    //notifyListeners();
+    notifyListeners();
   }
 }
