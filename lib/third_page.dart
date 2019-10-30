@@ -269,7 +269,7 @@ class AnxietyEntryPage extends StatelessWidget {
                                           form.save();//save data to local variables.
                                           //If there is no entry, add a new one once.
                                           if(model.anxietyBabyClass.data == null || model.anxietyBabyClass.data.isEmpty) {
-                                            await AnxietyService.postAnxiety('http://' + serverIP + ':60000/anxieties', date.toIso8601String(), _anxEntryController.text, selectThisRadioButton(scopedAnxiety.anxietyBabyClass.groupValue));
+                                            await AnxietyService.postAnxiety('http://' + serverIP + '/anxieties', date.toIso8601String(), _anxEntryController.text, selectThisRadioButton(scopedAnxiety.anxietyBabyClass.groupValue));
                                             await model.getData(this.date.toIso8601String());
                                             print("Did a post.");
                                             Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(seconds: 1), content: Text('Created new entry.')));
@@ -302,7 +302,7 @@ class AnxietyEntryPage extends StatelessWidget {
                                             print('made it to the else.');
                                             model.anxietyBabyClass.data[0].setAnxEntry(_anxEntryController.text);
                                             model.anxietyBabyClass.data[0].setTodayWas(selectThisRadioButton(scopedAnxiety.anxietyBabyClass.groupValue).toString());
-                                            await AnxietyService.putAnxiety('http://' + serverIP + ':60000/anxieties', model.anxietyBabyClass.data[0]);
+                                            await AnxietyService.putAnxiety('http://' + serverIP + '/anxieties', model.anxietyBabyClass.data[0]);
                                             await model.getData(this.date.toIso8601String());
                                             print("Did a put.");
                                             Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(seconds: 1), content: Text('Updated this entry.')));
