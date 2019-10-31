@@ -22,32 +22,18 @@ class AnxietyEntryPage extends StatelessWidget {
 
   static const String serverIP = StaticServerIP.serverIP;
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _anxEntryController = TextEditingController();
-  //var _data;
+  final TextEditingController _anxEntryController = TextEditingController();//The controller adds additional functionality and data retrieval to the TextFormField()
   final ScopedAnxiety scopedAnxiety = ScopedAnxiety();// ScopedModel that allows for state management.
-  //int groupValue;//= scopedAnxiety.anxietyBabyClass.groupValue;
 
   AnxietyEntryPage({Key key, @required this.date})
       : super(key: key){
-          /*scopedAnxiety.getData(this.date.toIso8601String()).then((data) {
-            //I intentionally do not use data here because I am just trying to get let the http call
-            //finish.
-            print("From constructor = " + scopedAnxiety.anxietyBabyClass.data[0].getAnxEntry());
-          });*/
-
           //Sets the initial color to be the green gradient.
           scopedAnxiety.updateGradientColor(1);
   }
 
   @override
   Widget build(BuildContext context) {
-    //scopedAnxiety.getData(this.date.toIso8601String());
     //This page gets the date the user chose from the previous page.
-    /*scopedAnxiety.getData(this.date.toIso8601String()).then((data) {
-      //I intentionally do not use data here because I am just trying to get let the http call
-      //finish.
-
-    });*/
 
     //check for before the async call has returned. This is the loading screen.
     if(scopedAnxiety.anxietyBabyClass.data == null) {
@@ -96,10 +82,7 @@ class AnxietyEntryPage extends StatelessWidget {
                             begin: FractionalOffset.topLeft,
                             end: FractionalOffset.bottomRight,
                             stops: [0.1, 0.5, 0.7, 0.9],
-                            //colors: [Colors.green[800], Colors.green[600], Colors.green[400], Colors.green[200],],
-                            //colors: gradientArray[4],
                             colors: getGradient(),
-                            //tileMode: TileMode.clamp
                           ),
                         ),
                         child: Builder(
@@ -122,12 +105,10 @@ class AnxietyEntryPage extends StatelessWidget {
                                   ],
                                 ),
                                 Row(
-                                  //width: 200,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Text(
                                       'Today was:',
-                                      //textAlign: TextAlign.center,
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 36.0,
@@ -191,7 +172,6 @@ class AnxietyEntryPage extends StatelessWidget {
                                   children: <Widget>[
                                     Text(
                                       'Because:',
-                                      //textAlign: TextAlign.left,
                                       style: TextStyle(
                                         color: Colors.black,
                                         fontSize: 36.0,
@@ -275,7 +255,7 @@ class AnxietyEntryPage extends StatelessWidget {
                                             Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(seconds: 1), content: Text('Created new entry.')));
                                             //This line fixes a bug where if the user picks a date with no entry in the database,
                                             // it will continue to create new entries, instead of create once, then update.
-                                            /*await AnxietyService.getAnxietyByDate('http://' + serverIP + ':60000/anxieties/' + date.toIso8601String()).then((data) {
+                                            /*await AnxietyService.getAnxietyByDate('http://' + serverIP + '/anxieties/' + date.toIso8601String()).then((data) {
                                       setState(() {
                                         this._data = data;
                                       });
@@ -299,7 +279,6 @@ class AnxietyEntryPage extends StatelessWidget {
                                           }
                                           //else update the existing one.
                                           else {
-                                            print('made it to the else.');
                                             model.anxietyBabyClass.data[0].setAnxEntry(_anxEntryController.text);
                                             model.anxietyBabyClass.data[0].setTodayWas(selectThisRadioButton(scopedAnxiety.anxietyBabyClass.groupValue).toString());
                                             await AnxietyService.putAnxiety('http://' + serverIP + '/anxieties', model.anxietyBabyClass.data[0]);
