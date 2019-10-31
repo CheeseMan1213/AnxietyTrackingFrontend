@@ -10,6 +10,7 @@ import 'api_services/anxiety_entity_service/anxiety_service.dart';
 import 'my_widgets/delete_button.dart';
 import 'my_widgets/radio_button.dart';
 import 'my_widgets/submit_button.dart';
+import 'my_widgets/anxiety_entry_form.dart';
 
 import 'static_server_ip/static_server_ip.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -186,7 +187,8 @@ class AnxietyEntryPage extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                TextFormField(
+                                AnxietyEntryForm(_anxEntryController),
+                                /*TextFormField(
                                   //The controller adds additional functionality and data retrieval to the TextFormField()
                                   controller: this._anxEntryController,
                                   keyboardType: TextInputType.multiline,
@@ -229,12 +231,12 @@ class AnxietyEntryPage extends StatelessWidget {
                                     return null;
                                   },
                                   onSaved: (val) {
-                                    /*setState(() {
+                                    *//*setState(() {
                               _anxEntry.setAnxEntry(val);
                               _data[0].setAnxEntry(val);
-                            });*/
+                            });*//*
                                   },
-                                ),
+                                ),*/
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
