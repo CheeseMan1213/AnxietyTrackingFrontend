@@ -4,7 +4,6 @@
  * from the Terminal from the this projects root directory.
  * command = 'flutter pub run build_runner build'
  */
-import 'package:anxiety_tracking_front_end/today_was.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'anxiety.g.dart';
 
