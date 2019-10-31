@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'api_services/anxiety_entity_service/anxiety_service.dart';
 import 'my_widgets/delete_button.dart';
+import 'my_widgets/submit_button.dart';
 
 import 'static_server_ip/static_server_ip.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -232,7 +233,8 @@ class AnxietyEntryPage extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     DeleteButton(date.toIso8601String()),
-                                    RaisedButton(
+                                    SubmitButton(date, _formKey, _anxEntryController),
+                                    /*RaisedButton(
                                       color: Colors.white,
                                       textColor: Colors.black,
                                       shape: RoundedRectangleBorder(
@@ -255,26 +257,26 @@ class AnxietyEntryPage extends StatelessWidget {
                                             Scaffold.of(context).showSnackBar(SnackBar(duration: const Duration(seconds: 1), content: Text('Created new entry.')));
                                             //This line fixes a bug where if the user picks a date with no entry in the database,
                                             // it will continue to create new entries, instead of create once, then update.
-                                            /*await AnxietyService.getAnxietyByDate('http://' + serverIP + '/anxieties/' + date.toIso8601String()).then((data) {
+                                            *//*await AnxietyService.getAnxietyByDate('http://' + serverIP + '/anxieties/' + date.toIso8601String()).then((data) {
                                       setState(() {
                                         this._data = data;
                                       });
-                                    });*/
+                                    });*//*
                                             //if it is still null or empty after the post.
                                             if(model.anxietyBabyClass.data == null || model.anxietyBabyClass.data.isEmpty) {
                                               _anxEntryController.text = "There was an error with the post.";
-                                              /*setState(() {
+                                              *//*setState(() {
                                         //
-                                      });*/
+                                      });*//*
                                             }
                                             else {
                                               //Populates text for field with date from database if it is there.
                                               _anxEntryController.text = model.anxietyBabyClass.data[0].getAnxEntry();
                                               //sets state of radio button from database.
                                               selectThisRadioButton(model.anxietyBabyClass.data[0].getTodayWasAsInteger());
-                                              /*setState(() {
+                                              *//*setState(() {
                                         //
-                                      });*/
+                                      });*//*
                                             }
                                           }
                                           //else update the existing one.
@@ -288,13 +290,13 @@ class AnxietyEntryPage extends StatelessWidget {
                                             print(model.anxietyBabyClass.data);
                                           }
                                           FocusScope.of(context).requestFocus(FocusNode());
-                                          /*setState(() {
+                                          *//*setState(() {
                                     //
-                                  });*/
+                                  });*//*
                                         }
                                       },
                                       child: Text('Submit'),
-                                    ),
+                                    ),*/
                                   ],
                                 ),
                                 RaisedButton(
