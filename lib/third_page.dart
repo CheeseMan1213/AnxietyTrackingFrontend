@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'api_services/anxiety_entity_service/anxiety_service.dart';
 import 'my_widgets/delete_button.dart';
+import 'my_widgets/radio_button.dart';
 import 'my_widgets/submit_button.dart';
 
 import 'static_server_ip/static_server_ip.dart';
@@ -121,29 +122,32 @@ class AnxietyEntryPage extends StatelessWidget {
                                   // Row 1
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Radio(
+                                    /*Radio(
                                       // For Awesome
                                       onChanged: (int e) => selectThisRadioButton(e),
                                       activeColor: Colors.black,
                                       value: 1,// When matches 'groupValue' the radio button gets selected.
                                       groupValue: scopedAnxiety.anxietyBabyClass.groupValue,
-                                    ),
+                                    ),*/
+                                    RadioButton(1),
                                     Text('Awesome'),
-                                    Radio(
+                                    /*Radio(
                                       // For Good
                                       onChanged: (int e) => selectThisRadioButton(e),
                                       activeColor: Colors.black,
                                       value: 2,// When matches 'groupValue' the radio button gets selected.
                                       groupValue: scopedAnxiety.anxietyBabyClass.groupValue,
-                                    ),
+                                    ),*/
+                                    RadioButton(2),
                                     Text('Good'),
-                                    Radio(
+                                    /*Radio(
                                       // For Fine
                                       onChanged: (int e) => selectThisRadioButton(e),
                                       activeColor: Colors.black,
                                       value: 3,// When matches 'groupValue' the radio button gets selected.
                                       groupValue: scopedAnxiety.anxietyBabyClass.groupValue,
-                                    ),
+                                    ),*/
+                                    RadioButton(3),
                                     Text('Fine'),
                                   ],
                                 ),
@@ -151,21 +155,23 @@ class AnxietyEntryPage extends StatelessWidget {
                                   // Row 2
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
-                                    Radio(
+                                    /*Radio(
                                       // For NotSoGood
                                       onChanged: (int e) => selectThisRadioButton(e),
                                       activeColor: Colors.black,
                                       value: 4,// When matches 'groupValue' the radio button gets selected.
                                       groupValue: scopedAnxiety.anxietyBabyClass.groupValue,
-                                    ),
+                                    ),*/
+                                    RadioButton(4),
                                     Text('Not so good'),
-                                    Radio(
+                                    /*Radio(
                                       // For Terrible
                                       onChanged: (int e) => selectThisRadioButton(e),
                                       activeColor: Colors.black,
                                       value: 5,// When matches 'groupValue' the radio button gets selected.
                                       groupValue: scopedAnxiety.anxietyBabyClass.groupValue,
-                                    ),
+                                    ),*/
+                                    RadioButton(5),
                                     Text('Terrible'),
                                   ],
                                 ),
