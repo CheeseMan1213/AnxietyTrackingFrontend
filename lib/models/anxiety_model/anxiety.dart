@@ -3,8 +3,12 @@
  * without the outer most quotes
  * from the Terminal from the this projects root directory.
  * command = 'flutter pub run build_runner build'
+ * if you get an error like 'unable to prompt for permission to remove' try this command
+ * 'flutter packages pub run build_runner build --delete-conflicting-outputs'
+ * then try the first command again.
  */
 import 'package:json_annotation/json_annotation.dart';
+import '../../today_was.dart';
 part 'anxiety.g.dart';
 
 ///This is my entity(for MySQL people)/collection(for MongoDB people)
@@ -17,7 +21,7 @@ class Anxiety {
   String id;
   String date;//Date that will be passed form the calendar page.
   String anxEntry;//The anxiety entry text.
-  String todayWas;//For the radio buttons.
+  TodayWas todayWas;//For the radio buttons.
 
   //Constructor.
   //I do not include the id in the constructor because I want MongoDB to handle the
@@ -37,7 +41,7 @@ class Anxiety {
   String getAnxEntry() {
     return anxEntry;
   }
-  String getTodayWas() {
+  TodayWas getTodayWas() {
     return todayWas;
   }
   void setId(id) {
@@ -57,19 +61,19 @@ class Anxiety {
     int val = 0;
 
     switch (this.todayWas) {
-      case "TodayWas.Awesome":
+      case TodayWas.Awesome:
         val = 1;
         break;
-      case "TodayWas.Good":
+      case TodayWas.Good:
         val = 2;
         break;
-      case "TodayWas.Fine":
+      case TodayWas.Fine:
         val = 3;
         break;
-      case "TodayWas.NotSoGood":
+      case TodayWas.NotSoGood:
         val = 4;
         break;
-      case "TodayWas.Terrible":
+      case TodayWas.Terrible:
         val = 5;
         break;
       default:
