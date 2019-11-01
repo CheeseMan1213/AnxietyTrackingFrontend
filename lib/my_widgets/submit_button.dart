@@ -57,15 +57,12 @@ class SubmitButton extends StatelessWidget {
                       _anxEntryController.text = model.anxietyBabyClass.data[0].getAnxEntry();
                       //sets state of radio button from database.
                       OtherMethods.selectThisRadioButton(model.anxietyBabyClass.data[0].getTodayWasAsInteger(), model);
-                      /*setState(() {
-                                        //
-                                      });*/
                     }
                   }
                   //else update the existing one.
                   else {
                     model.anxietyBabyClass.data[0].setAnxEntry(_anxEntryController.text);
-                    model.anxietyBabyClass.data[0].setTodayWas(OtherMethods.selectThisRadioButton(model.anxietyBabyClass.groupValue, model).toString());
+                    model.anxietyBabyClass.data[0].setTodayWas(OtherMethods.selectThisRadioButton(model.anxietyBabyClass.groupValue, model));
                     await AnxietyService.putAnxiety('http://' + serverIP + '/anxieties', model.anxietyBabyClass.data[0]);
                     await model.getData(this._date.toIso8601String());
                     print("Did a put.");
@@ -73,9 +70,6 @@ class SubmitButton extends StatelessWidget {
                     print(model.anxietyBabyClass.data);
                   }
                   FocusScope.of(context).requestFocus(FocusNode());
-                  /*setState(() {
-                                    //
-                                  });*/
                 }
               },
               child: Text('Submit'),
