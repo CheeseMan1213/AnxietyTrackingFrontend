@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../models/anxiety_model/anxiety.dart';
+import '../../today_was.dart';
 class AnxietyService {
 
   ///Takes a URL with a date added to the end, and sends it off to get one object back from the database.
@@ -23,9 +24,6 @@ class AnxietyService {
       print('Successful Get.');
       var convertDataToJson2 = json.decode(response.body);
       var responses = convertDataToJson2.map((j) => Anxiety.fromJson(j)).toList();
-      /*setState(() {
-        //
-      });*/
       return responses;
     } else {
       print('Failed Get. Status code: ' + statusCode.toString());
@@ -35,7 +33,7 @@ class AnxietyService {
   }
 
   //Takes a first and last name along with the post url and creates a new name in the database.
-  static Future postAnxiety(String url, String date, String anxEntry, String todayWas) async {
+  static Future postAnxiety(String url, String date, String anxEntry, TodayWas todayWas) async {
     Anxiety newAnxietyEntry = new Anxiety(date, anxEntry, todayWas);
 
     var response = await http.post(
