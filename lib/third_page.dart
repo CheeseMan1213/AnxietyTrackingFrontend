@@ -23,7 +23,7 @@ class AnxietyEntryPage extends StatelessWidget {
   final DateTime date;
 
   static const String serverIP = StaticServerIP.serverIP;
-  final _formKey = GlobalKey<FormState>();
+  static GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _anxEntryController = TextEditingController();//The controller adds additional functionality and data retrieval to the TextFormField()
   final ScopedAnxiety scopedAnxiety = ScopedAnxiety();// ScopedModel that allows for state management.
 
@@ -83,7 +83,7 @@ class AnxietyEntryPage extends StatelessWidget {
                         ),
                         child: Builder(
                           builder: (context) => Form(
-                            key: this._formKey,
+                            key: _formKey,
                             child: Column(
                               children: <Widget>[
                                 Row(
