@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 
 import 'my_widgets/delete_button.dart';
+import 'my_widgets/loading_screen.dart';
 import 'my_widgets/radio_button.dart';
 import 'my_widgets/submit_button.dart';
 import 'my_widgets/anxiety_entry_form.dart';
@@ -15,6 +16,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import 'models/anxiety_model/scoped_anxiety.dart';
 import 'api_services/anxiety_entity_service/other_methods.dart';
+import 'my_widgets/entry_from_database.dart';
 
 ///This is the anxiety entry route. It take a date for the previous route, the calender page.
 ///It is a stateful widget.
@@ -24,13 +26,22 @@ class AnxietyEntryPage extends StatelessWidget {
 
   static const String serverIP = StaticServerIP.serverIP;
   static GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _anxEntryController = TextEditingController();//The controller adds additional functionality and data retrieval to the TextFormField()
+  //static TextEditingController _anxEntryController = TextEditingController();//The controller adds additional functionality and data retrieval to the TextFormField()
   final ScopedAnxiety scopedAnxiety = ScopedAnxiety();// ScopedModel that allows for state management.
 
-  AnxietyEntryPage({Key key, @required this.date})
-      : super(key: key){
-          //Sets the initial color to be the green gradient.
-          scopedAnxiety.updateGradientColor(1);
+  AnxietyEntryPage({Key key, @required this.date}) : super(key: key) {
+
+    scopedAnxiety.getData(this.date.toIso8601String()).then((data) {
+      //I intentionally do not use data here because I am just trying to get let the http call finish.
+      if(scopedAnxiety.anxietyBabyClass.data.isEmpty) {
+        //Sets the initial color to be the green gradient.
+        scopedAnxiety.updateGradientColor(1);
+      }
+      else {
+        //sets state of radio button from database.
+        OtherMethods.selectThisRadioButton(scopedAnxiety.anxietyBabyClass.data[0].getTodayWasAsInteger(), scopedAnxiety);
+      }
+    });
   }
 
   @override
@@ -39,21 +50,9 @@ class AnxietyEntryPage extends StatelessWidget {
 
     //check for before the async call has returned. This is the loading screen.
     if(scopedAnxiety.anxietyBabyClass.data == null) {
-      scopedAnxiety.getData(this.date.toIso8601String()).then((data) {
-        //I intentionally do not use data here because I am just trying to get let the http call
-        //finish.
-        //print("From loading if statement = " + scopedAnxiety.anxietyBabyClass.data.toString());
-        if(scopedAnxiety.anxietyBabyClass.data == null || scopedAnxiety.anxietyBabyClass.data.isEmpty) {
-          _anxEntryController.text = "";//No entry yet.
-        }
-        else {
-          //Populates text for field with date from database if it is there.
-          _anxEntryController.text = scopedAnxiety.anxietyBabyClass.data[0].getAnxEntry();
-          //sets state of radio button from database.
-          OtherMethods.selectThisRadioButton(scopedAnxiety.anxietyBabyClass.data[0].getTodayWasAsInteger(), scopedAnxiety);
-        }
-      });
-      //return LoadingScreen();
+      return LoadingScreen();
+    } else {
+
       return ScopedModel<ScopedAnxiety>(
         model: scopedAnxiety,
         child: Scaffold(
@@ -145,14 +144,16 @@ class AnxietyEntryPage extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                AnxietyEntryForm(_anxEntryController),
+                                //AnxietyEntryForm(scopedAnxiety.anxietyBabyClass.anxEntryController, tempText),
+                                AnxietyEntryForm(model),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     DeleteButton(date.toIso8601String()),
-                                    SubmitButton(date, _formKey, _anxEntryController),
+                                    SubmitButton(date, _formKey, scopedAnxiety.anxietyBabyClass.anxEntryController),
                                   ],
                                 ),
+                                EntryFromDatabase(model),
                                 RaisedButton(
                                   child: Text('Return to homepage'),
                                   onPressed: () {
