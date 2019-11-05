@@ -3,10 +3,11 @@ import 'package:scoped_model/scoped_model.dart';
 import '../models/anxiety_model/scoped_anxiety.dart';
 
 class AnxietyEntryForm extends StatelessWidget {
-  final TextEditingController _anxEntryController;
-  //var2
 
-  AnxietyEntryForm(this._anxEntryController);
+  AnxietyEntryForm(ScopedAnxiety scopedAnxiety) {
+    //Used to clear the form with each new load.
+    scopedAnxiety.anxietyBabyClass.anxEntryController.text = "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +15,7 @@ class AnxietyEntryForm extends StatelessWidget {
       builder: (context, child, model) =>
           TextFormField(
             //The controller adds additional functionality and data retrieval to the TextFormField()
-            controller: this._anxEntryController,
+            controller: model.anxietyBabyClass.anxEntryController,
             keyboardType: TextInputType.multiline,
             cursorColor: Colors.white,
             autocorrect: true,
@@ -53,9 +54,6 @@ class AnxietyEntryForm extends StatelessWidget {
                 return 'Please select how your day was.';
               }
               return null;
-            },
-            onSaved: (val) {
-              //
             },
           ),
     );
